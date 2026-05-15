@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elliott Wave Dashboard</title>
+<style>
+  :root {
+    --bg:       #0a0e1a;
+    --card:     #111827;
+    --border:   #1f2937;
+    --text:     #e5e7eb;
+    --muted:    #6b7280;
+    --green:    #10b981;
+    --red:      #ef4444;
+    --yellow:   #f59e0b;
+    --blue:     #3b82f6;
+    --purple:   #8b5cf6;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  /* HEADER */
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  header h1 { font-size: 1.4rem; display: flex; align-items: center; gap: 10px; }
+  .badge-live {
+    background: var(--green);
+    color: #000;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 99px;
+    letter-spacing: .05em;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  #last-update { font-size: 0.8rem; color: var(--muted); }
+
+  /* GRID */
+  #grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 18px;
+  }
+
+  /* CARD */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(0,0,0,.4); }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-header .symbol { font-size: 1.1rem; font-weight: 700; letter-spacing: .03em; }
+  .card-header .price  { font-size: 1rem; font-weight: 600; }
+
+  .card-body { padding: 16px 18px; display: flex; flex-direction: column; gap: 14px; }
+
+  /* SEÑAL BADGE */
+  .signal-row { display: flex; align-items: center; gap: 10px; }
+  .signal-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 4px 14px;
+    border-radius: 99px;
+    letter-spacing: .05em;
+  }
+  .signal-COMPRA   { background: rgba(16,185,129,.15); color: var(--green); border: 1px solid var(--green); }
+  .signal-VENTA    { background: rgba(239,68,68,.15);  color: var(--red);   border: 1px solid var(--red);   }
+  .signal-ESPERAR  { background: rgba(245,158,11,.15); color: var(--yellow);border: 1px solid var(--yellow);}
+  .signal-SIN_SEÑAL{ background: rgba(107,114,128,.1); color: var(--muted); border: 1px solid var(--border);}
+
+  .confianza-badge {
+    font-size: 0.7rem;
+    padding: 3px 10px;
+    border-radius: 99px;
+    background: var(--border);
+    color: var(--muted);
+  }
+  .conf-ALTA  { background: rgba(139,92,246,.15); color: var(--purple); border:1px solid var(--purple); }
+  .conf-MEDIA { background: rgba(59,130,246,.15);  color: var(--blue);   border:1px solid var(--blue);   }
+
+  /* ONDAS */
+  .section-title {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .wave-block {
+    background: rgba(255,255,255,.03);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+  }
+  .wave-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .wave-label { font-size: 0.7rem; color: var(--muted); }
+  .wave-value { font-size: 0.82rem; font-weight: 600; }
+  .wave-desc  { font-size: 0.75rem; color: var(--muted); margin-top: 4px; line-height: 1.4; }
+
+  /* NIVELES */
+  .levels-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .level-item {
+    background: rgba(255,255,255,.03);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+  }
+  .level-item.entry  { border-color: var(--blue);   background: rgba(59,130,246,.07);  }
+  .level-item.stop   { border-color: var(--red);    background: rgba(239,68,68,.07);   }
+  .level-item.target { border-color: var(--green);  background: rgba(16,185,129,.07);  }
+  .level-label { font-size: 0.65rem; color: var(--muted); margin-bottom: 2px; }
+  .level-value { font-size: 0.9rem; font-weight: 700; }
+
+  /* INDICADORES */
+  .ind-row { display: flex; gap: 6px; flex-wrap: wrap; }
+  .ind-chip {
+    font-size: 0.7rem;
+    padding: 4px 10px;
+    border-radius: 99px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid var(--border);
+  }
+
+  /* RESUMEN */
+  .resumen {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.5;
+    border-left: 3px solid var(--border);
+    padding-left: 10px;
+  }
+
+  /* RR */
+  .rr-badge {
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 8px;
+    background: rgba(16,185,129,.1);
+    color: var(--green);
+    border: 1px solid var(--green);
+  }
+
+  /* TIMESTAMP */
+  .card-footer {
+    padding: 8px 18px;
+    border-top: 1px solid var(--border);
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-align: right;
+  }
+
+  /* EMPTY / LOADING */
+  #loading, #empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+    font-size: 1rem;
+  }
+  .spinner {
+    width: 40px; height: 40px;
+    border: 3px solid var(--border);
+    border-top-color: var(--blue);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🌊 Elliott Wave Dashboard <span class="badge-live">LIVE</span></h1>
+  <span id="last-update">Cargando...</span>
+</header>
+
+<div id="loading">
+  <div class="spinner"></div>
+  Cargando análisis...
+</div>
+
+<div id="grid" style="display:none"></div>
+<div id="empty"  style="display:none">📭 Sin datos aún. Ejecuta el analyzer.py primero.</div>
+
+<script>
+// ── Helpers ──────────────────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+
+function signalColor(tipo) {
+  return { COMPRA:'var(--green)', VENTA:'var(--red)', ESPERAR:'var(--yellow)' }[tipo] || 'var(--muted)';
+}
+
+function renderCard(a) {
+  const s  = a.señal    || {};
+  const gm = a.onda_grado_mayor  || {};
+  const gn = a.onda_grado_menor  || {};
+  const nv = a.niveles  || {};
+  const ind = a.indicadores || {};
+  const tipo = s.tipo || 'SIN_SEÑAL';
+  const rr   = a.ratio_riesgo_beneficio;
+
+  const hasLevels = tipo === 'COMPRA' || tipo === 'VENTA';
+
+  return `
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="symbol">${a.simbolo || '?'}</div>
+      </div>
+      <div class="price" style="color:${signalColor(tipo)}">${a.precio_actual ?? '—'}</div>
+    </div>
+
+    <div class="card-body">
+
+      <!-- Señal -->
+      <div>
+        <div class="section-title">Señal</div>
+        <div class="signal-row">
+          <span class="signal-badge signal-${tipo}">${tipo} ${s.fuerza||''}</span>
+          <span class="confianza-badge conf-${a.confianza||''}">${a.confianza||'?'}</span>
+          ${rr ? `<span class="rr-badge">R/B ${Number(rr).toFixed(1)}x</span>` : ''}
+        </div>
+        <p style="font-size:.75rem;color:var(--muted);margin-top:6px">${s.descripcion||''}</p>
+      </div>
+
+      <!-- Ondas -->
+      <div>
+        <div class="section-title">🌊 Ondas de Elliott</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div class="wave-block">
+            <div class="wave-row">
+              <span class="wave-label">GRADO MAYOR</span>
+              <span class="wave-value" style="color:var(--blue)">${gm.onda_actual||'?'}</span>
+            </div>
+            <div class="wave-row">
+              <span class="wave-label">Estructura</span>
+              <span style="font-size:.75rem">${gm.estructura||'?'}</span>
+            </div>
+            <div class="wave-desc">${gm.descripcion||''}</div>
+            ${gm.fibonacci_nivel ? `<div style="font-size:.7rem;margin-top:4px;color:var(--purple)">Fib: ${gm.fibonacci_nivel}</div>` : ''}
+          </div>
+          <div class="wave-block">
+            <div class="wave-row">
+              <span class="wave-label">GRADO MENOR</span>
+              <span class="wave-value" style="color:var(--purple)">${gn.onda_actual||'?'}</span>
+            </div>
+            <div class="wave-row">
+              <span class="wave-label">Estructura</span>
+              <span style="font-size:.75rem">${gn.estructura||'?'}</span>
+            </div>
+            <div class="wave-desc">${gn.descripcion||''}</div>
+            ${gn.fibonacci_nivel ? `<div style="font-size:.7rem;margin-top:4px;color:var(--purple)">Fib: ${gn.fibonacci_nivel}</div>` : ''}
+          </div>
+        </div>
+      </div>
+
+      <!-- Niveles (solo si hay señal) -->
+      ${hasLevels && nv.entrada ? `
+      <div>
+        <div class="section-title">💹 Niveles de Operación</div>
+        <div class="levels-grid">
+          <div class="level-item entry">
+            <div class="level-label">ENTRADA</div>
+            <div class="level-value" style="color:var(--blue)">${nv.entrada ?? '—'}</div>
+          </div>
+          <div class="level-item stop">
+            <div class="level-label">STOP LOSS</div>
+            <div class="level-value" style="color:var(--red)">${nv.stop_loss ?? '—'}</div>
+          </div>
+          <div class="level-item target">
+            <div class="level-label">OBJETIVO 1</div>
+            <div class="level-value" style="color:var(--green)">${nv.objetivo_1 ?? '—'}</div>
+          </div>
+          <div class="level-item target">
+            <div class="level-label">OBJETIVO 2</div>
+            <div class="level-value" style="color:var(--green)">${nv.objetivo_2 ?? '—'}</div>
+          </div>
+          ${nv.objetivo_3 ? `
+          <div class="level-item target" style="grid-column:1/-1">
+            <div class="level-label">OBJETIVO 3</div>
+            <div class="level-value" style="color:var(--green)">${nv.objetivo_3}</div>
+          </div>` : ''}
+        </div>
+      </div>` : ''}
+
+      <!-- Indicadores -->
+      <div>
+        <div class="section-title">📈 Indicadores</div>
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div class="ind-chip">RSI · ${ind.rsi_interpretacion||'—'}</div>
+          <div class="ind-chip">MACD · ${ind.macd_interpretacion||'—'}</div>
+          <div class="ind-chip">ADX · ${ind.adx_interpretacion||'—'}</div>
+        </div>
+        ${ind.confluencia ? `<p style="font-size:.73rem;color:var(--muted);margin-top:8px">${ind.confluencia}</p>` : ''}
+      </div>
+
+      <!-- Resumen -->
+      <div>
+        <div class="section-title">📝 Resumen</div>
+        <p class="resumen">${a.resumen||'—'}</p>
+        ${a.razon_confianza ? `<p style="font-size:.7rem;color:var(--muted);margin-top:5px">${a.razon_confianza}</p>` : ''}
+      </div>
+
+    </div>
+
+    <div class="card-footer">${a.timestamp||''}</div>
+  </div>`;
+}
+
+async function loadData() {
+  try {
+    const res = await fetch('results.json?t=' + Date.now());
+    if (!res.ok) throw new Error('no data');
+    const data = await res.json();
+
+    $('loading').style.display = 'none';
+    $('last-update').textContent = '🕐 ' + (data.last_update || '');
+
+    const analyses = data.analyses || [];
+    if (!analyses.length) {
+      $('empty').style.display = 'block';
+      return;
+    }
+
+    $('grid').style.display = 'grid';
+    $('grid').innerHTML = analyses.map(renderCard).join('');
+  } catch(e) {
+    $('loading').style.display = 'none';
+    $('empty').style.display   = 'block';
+  }
+}
+
+// Cargar al inicio y refrescar cada 5 minutos
+loadData();
+setInterval(loadData, 5 * 60 * 1000);
+</script>
+
+</body>
+</html>
