@@ -28,19 +28,23 @@ RESULTS_FILE = "results.json"
 
 
 def fetch_crypto_ohlcv(symbol: str, interval: str = "1h", limit: int = 200) -> pd.DataFrame:
-    url = "https://api.binance.com/api/v3/klines"
-    params = {"symbol": symbol, "interval": interval, "limit": limit}
+    # Convertir símbolo de Binance a CoinGecko
+    coin_map = {
+        "BTCUSDT": "bitcoin",
+        "ETHUSDT": "ethereum",
+        "SOLUSDT": "solana",
+        "BNBUSDT": "binancecoin"
+    }
+    coin_id = coin_map.get(symbol, symbol.lower().replace("usdt",""))
+    url = f"https://api.coingecko.com/api/v3/coins/{coin_id}/ohlc"
+    params = {"vs_currency": "usd", "days": "7"}
     r = requests.get(url, params=params, timeout=10)
     r.raise_for_status()
     data = r.json()
-    df = pd.DataFrame(data, columns=[
-        "timestamp","open","high","low","close","volume",
-        "close_time","qav","trades","taker_base","taker_quote","ignore"
-    ])
+    df = pd.DataFrame(data, columns=["timestamp","open","high","low","close"])
     df["timestamp"] = pd.to_datetime(df["timestamp"], unit="ms")
-    for col in ["open","high","low","close","volume"]:
-        df[col] = df[col].astype(float)
-    return df[["timestamp","open","high","low","close","volume"]].set_index("timestamp")
+    df["volume"] = 0.0
+    return df.set_index("timestamp")
 
 
 def fetch_stock_ohlcv(symbol: str, period: str = "60d", interval: str = "1h") -> pd.DataFrame:
