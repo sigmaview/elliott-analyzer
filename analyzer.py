@@ -7,7 +7,7 @@ import os
 import json
 import requests
 import pandas as pd
-import pandas_ta as ta
+import ta
 from datetime import datetime, timezone
 from typing import Optional
 
@@ -16,7 +16,6 @@ TELEGRAM_TOKEN   = os.getenv("TELEGRAM_TOKEN", "TU_TOKEN_AQUI")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "TU_CHAT_ID_AQUI")
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "TU_API_KEY_AQUI")
 
-# Activos a monitorear: (símbolo, tipo)
 ASSETS = [
     ("BTCUSDT",  "crypto"),
     ("ETHUSDT",  "crypto"),
@@ -24,13 +23,12 @@ ASSETS = [
     ("NVDA",     "stock"),
 ]
 
-RESULTS_FILE = "results.json"  # Para el dashboard web
+RESULTS_FILE = "results.json"
 # ──────────────────────────────────────────────────────────────────────────────
 
 
 def fetch_crypto_ohlcv(symbol: str, interval: str = "1h", limit: int = 200) -> pd.DataFrame:
-    """Descarga velas de Binance (gratis, sin API key)"""
-    url = f"https://api.binance.com/api/v3/klines"
+    url = "https://api.binance.com/api/v3/klines"
     params = {"symbol": symbol, "interval": interval, "limit": limit}
     r = requests.get(url, params=params, timeout=10)
     r.raise_for_status()
@@ -46,7 +44,6 @@ def fetch_crypto_ohlcv(symbol: str, interval: str = "1h", limit: int = 200) -> p
 
 
 def fetch_stock_ohlcv(symbol: str, period: str = "60d", interval: str = "1h") -> pd.DataFrame:
-    """Descarga velas de Yahoo Finance (gratis)"""
     import yfinance as yf
     ticker = yf.Ticker(symbol)
     df = ticker.history(period=period, interval=interval)
@@ -56,40 +53,26 @@ def fetch_stock_ohlcv(symbol: str, period: str = "60d", interval: str = "1h") ->
 
 
 def calculate_indicators(df: pd.DataFrame) -> pd.DataFrame:
-    """Calcula RSI(14), MACD y ADX+DI como en las monografías de Enrique Santos"""
     df = df.copy()
-
-    # RSI(14)
-    df["rsi"] = ta.rsi(df["close"], length=14)
-
-    # MACD (12, 26, 9)
-    macd = ta.macd(df["close"], fast=12, slow=26, signal=9)
-    if macd is not None:
-        df["macd"]        = macd["MACD_12_26_9"]
-        df["macd_signal"] = macd["MACDs_12_26_9"]
-        df["macd_hist"]   = macd["MACDh_12_26_9"]
-
-    # ADX + DI+ / DI-
-    adx = ta.adx(df["high"], df["low"], df["close"], length=14)
-    if adx is not None:
-        df["adx"]   = adx["ADX_14"]
-        df["di_pos"] = adx["DMP_14"]
-        df["di_neg"] = adx["DMN_14"]
-
-    # Fibonacci pivots (últimas 100 velas)
-    window = min(100, len(df))
-    df["swing_high"] = df["high"].rolling(window).max()
-    df["swing_low"]  = df["low"].rolling(window).min()
-
+    df["rsi"]         = ta.momentum.RSIIndicator(df["close"], window=14).rsi()
+    macd              = ta.trend.MACD(df["close"], window_slow=26, window_fast=12, window_sign=9)
+    df["macd"]        = macd.macd()
+    df["macd_signal"] = macd.macd_signal()
+    df["macd_hist"]   = macd.macd_diff()
+    adx               = ta.trend.ADXIndicator(df["high"], df["low"], df["close"], window=14)
+    df["adx"]         = adx.adx()
+    df["di_pos"]      = adx.adx_pos()
+    df["di_neg"]      = adx.adx_neg()
+    window            = min(100, len(df))
+    df["swing_high"]  = df["high"].rolling(window).max()
+    df["swing_low"]   = df["low"].rolling(window).min()
     return df
 
 
 def build_analysis_prompt(symbol: str, df: pd.DataFrame) -> str:
-    """Construye el prompt para Claude con los datos del activo"""
     last   = df.iloc[-1]
     prev20 = df.iloc[-20:]
 
-    # Últimas 50 velas como contexto de precio
     price_data = []
     for i, (ts, row) in enumerate(df.iloc[-50:].iterrows()):
         price_data.append(
@@ -97,10 +80,8 @@ def build_analysis_prompt(symbol: str, df: pd.DataFrame) -> str:
             f"O:{row['open']:.4f} H:{row['high']:.4f} L:{row['low']:.4f} C:{row['close']:.4f} | "
             f"Vol:{row['volume']:.0f}"
         )
-
     price_str = "\n".join(price_data)
 
-    # Calcular variaciones recientes
     change_1h  = ((last["close"] - df.iloc[-2]["close"]) / df.iloc[-2]["close"] * 100) if len(df) >= 2 else 0
     change_24h = ((last["close"] - df.iloc[-25]["close"]) / df.iloc[-25]["close"] * 100) if len(df) >= 25 else 0
 
@@ -132,27 +113,23 @@ Analiza según la metodología Elliott de Enrique Santos y responde EXACTAMENTE 
   "simbolo": "{symbol}",
   "precio_actual": {last['close']:.4f},
   "timestamp": "{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}",
-  
   "onda_grado_mayor": {{
-    "estructura": "Describe la pauta de grado mayor (ej: Pauta de Impulso alcista, Pauta Correctiva Plana, Zigzag, etc.)",
-    "onda_actual": "En qué onda estamos (ej: Onda 3, Onda 4, Onda C)",
+    "estructura": "Pauta de Impulso alcista / bajista / Correctiva Plana / Zigzag / Terminal",
+    "onda_actual": "Onda 1/2/3/4/5 o A/B/C",
     "descripcion": "Descripción breve del contexto de grado mayor",
-    "fibonacci_nivel": "Nivel Fibonacci relevante en grado mayor"
+    "fibonacci_nivel": "Nivel Fibonacci relevante"
   }},
-  
   "onda_grado_menor": {{
     "estructura": "Estructura de grado menor",
     "onda_actual": "Onda actual de menor grado",
     "descripcion": "Descripción del comportamiento de corto plazo",
     "fibonacci_nivel": "Nivel Fibonacci de corto plazo"
   }},
-  
   "señal": {{
     "tipo": "COMPRA | VENTA | ESPERAR | SIN_SEÑAL",
     "fuerza": "FUERTE | MODERADA | DÉBIL",
     "descripcion": "Por qué hay o no hay señal ahora mismo"
   }},
-  
   "niveles": {{
     "entrada": null,
     "stop_loss": null,
@@ -160,34 +137,29 @@ Analiza según la metodología Elliott de Enrique Santos y responde EXACTAMENTE 
     "objetivo_2": null,
     "objetivo_3": null
   }},
-  
   "indicadores": {{
     "rsi_interpretacion": "Sobreventa/Sobrecompra/Divergencia alcista/bajista/Neutro",
     "macd_interpretacion": "Cruce alcista/bajista/Fallo/Divergencia/Neutro",
     "adx_interpretacion": "Tendencia fuerte(>30)/débil(<20)/corte DI+/DI-",
-    "confluencia": "¿Los 3 indicadores confirman la señal? Explica"
+    "confluencia": "Los 3 indicadores confirman la señal? Explica"
   }},
-  
   "ratio_riesgo_beneficio": null,
-  
   "resumen": "Resumen ejecutivo en 2-3 oraciones para el trader",
-  
   "confianza": "ALTA | MEDIA | BAJA",
   "razon_confianza": "Por qué tiene ese nivel de confianza"
 }}
 
 IMPORTANTE:
-- Si no hay señal clara, pon tipo: "ESPERAR" y niveles en null
-- Los niveles de entrada/stop/objetivos solo si hay señal COMPRA o VENTA
-- El ratio riesgo/beneficio calcula: (objetivo_1 - entrada) / (entrada - stop_loss) para compras
-- Sé conservador: solo señal FUERTE cuando hay confluencia de Elliott + 3 indicadores
-- Responde SOLO el JSON, sin texto adicional"""
+- Si no hay señal clara pon tipo ESPERAR y niveles en null
+- Los niveles solo si hay señal COMPRA o VENTA
+- Ratio riesgo/beneficio: (objetivo_1 - entrada) / (entrada - stop_loss) para compras
+- Solo señal FUERTE cuando hay confluencia de Elliott + 3 indicadores
+- Responde SOLO el JSON sin texto adicional"""
 
     return prompt
 
 
 def call_claude(prompt: str) -> dict:
-    """Llama a Claude API para el análisis"""
     headers = {
         "Content-Type": "application/json",
         "x-api-key": ANTHROPIC_API_KEY,
@@ -206,26 +178,17 @@ def call_claude(prompt: str) -> dict:
     )
     r.raise_for_status()
     text = r.json()["content"][0]["text"].strip()
-    # Limpiar posibles backticks
     text = text.replace("```json", "").replace("```", "").strip()
     return json.loads(text)
 
 
 def format_telegram_message(analysis: dict) -> str:
-    """Formatea el análisis para Telegram con emojis claros"""
-    s = analysis.get("señal", {})
-    tipo  = s.get("tipo", "SIN_SEÑAL")
+    s      = analysis.get("señal", {})
+    tipo   = s.get("tipo", "SIN_SEÑAL")
     fuerza = s.get("fuerza", "")
 
-    # Emoji de señal
-    emoji_señal = {
-        "COMPRA":    "🟢",
-        "VENTA":     "🔴",
-        "ESPERAR":   "🟡",
-        "SIN_SEÑAL": "⚪"
-    }.get(tipo, "⚪")
-
-    emoji_conf = {"ALTA": "🔥", "MEDIA": "⚡", "BAJA": "❄️"}.get(analysis.get("confianza",""), "")
+    emoji_señal = {"COMPRA":"🟢","VENTA":"🔴","ESPERAR":"🟡","SIN_SEÑAL":"⚪"}.get(tipo,"⚪")
+    emoji_conf  = {"ALTA":"🔥","MEDIA":"⚡","BAJA":"❄️"}.get(analysis.get("confianza",""),"")
 
     niveles = analysis.get("niveles", {})
     mayor   = analysis.get("onda_grado_mayor", {})
@@ -239,7 +202,7 @@ def format_telegram_message(analysis: dict) -> str:
 🕐 {analysis.get('timestamp','')}
 
 {emoji_señal} *SEÑAL: {tipo} {fuerza}* {emoji_señal}
-_{s.get('descripcion','')}._
+_{s.get('descripcion','')}_
 
 ━━━━ 🌊 ONDAS ━━━━
 📐 *Grado Mayor:* {mayor.get('onda_actual','')} — {mayor.get('estructura','')}
@@ -250,7 +213,7 @@ Fib: {mayor.get('fibonacci_nivel','')}
 _{menor.get('descripcion','')}_
 Fib: {menor.get('fibonacci_nivel','')}"""
 
-    if tipo in ("COMPRA", "VENTA") and niveles.get("entrada"):
+    if tipo in ("COMPRA","VENTA") and niveles.get("entrada"):
         rr = analysis.get("ratio_riesgo_beneficio")
         rr_str = f"{rr:.1f}x" if rr else "N/A"
         msg += f"""
@@ -266,10 +229,10 @@ Fib: {menor.get('fibonacci_nivel','')}"""
     msg += f"""
 
 ━━━━ 📈 INDICADORES ━━━━
-• RSI:  {inds.get('rsi_interpretacion','')}
-• MACD: {inds.get('macd_interpretacion','')}
-• ADX:  {inds.get('adx_interpretacion','')}
-• Confluencia: {inds.get('confluencia','')}
+- RSI:  {inds.get('rsi_interpretacion','')}
+- MACD: {inds.get('macd_interpretacion','')}
+- ADX:  {inds.get('adx_interpretacion','')}
+- Confluencia: {inds.get('confluencia','')}
 
 ━━━━ 📝 RESUMEN ━━━━
 {analysis.get('resumen','')}
@@ -281,19 +244,13 @@ _{analysis.get('razon_confianza','')}_"""
 
 
 def send_telegram(message: str) -> bool:
-    """Envía mensaje a Telegram"""
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
-    payload = {
-        "chat_id": TELEGRAM_CHAT_ID,
-        "text": message,
-        "parse_mode": "Markdown"
-    }
+    payload = {"chat_id": TELEGRAM_CHAT_ID, "text": message, "parse_mode": "Markdown"}
     r = requests.post(url, json=payload, timeout=10)
     return r.ok
 
 
 def save_results(results: list):
-    """Guarda resultados en JSON para el dashboard web"""
     with open(RESULTS_FILE, "w") as f:
         json.dump({
             "last_update": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
@@ -302,42 +259,29 @@ def save_results(results: list):
 
 
 def analyze_asset(symbol: str, asset_type: str) -> Optional[dict]:
-    """Proceso completo para un activo"""
     print(f"\n{'─'*50}")
     print(f"⏳ Analizando {symbol} ({asset_type})...")
-
     try:
-        # 1. Descargar datos
         if asset_type == "crypto":
             df = fetch_crypto_ohlcv(symbol)
         else:
             df = fetch_stock_ohlcv(symbol)
-
         print(f"   ✅ Datos descargados: {len(df)} velas")
-
-        # 2. Calcular indicadores
         df = calculate_indicators(df)
         df = df.dropna()
         print(f"   ✅ Indicadores calculados")
-
-        # 3. Construir prompt y llamar a Claude
-        prompt = build_analysis_prompt(symbol, df)
+        prompt   = build_analysis_prompt(symbol, df)
         analysis = call_claude(prompt)
-        print(f"   ✅ Análisis recibido: {analysis.get('señal',{}).get('tipo','?')} ({analysis.get('confianza','?')})")
-
-        # 4. Solo enviar a Telegram si hay señal o confianza ALTA
+        print(f"   ✅ Análisis: {analysis.get('señal',{}).get('tipo','?')} ({analysis.get('confianza','?')})")
         señal_tipo = analysis.get("señal", {}).get("tipo", "SIN_SEÑAL")
         confianza  = analysis.get("confianza", "BAJA")
-
-        if señal_tipo in ("COMPRA", "VENTA") or confianza == "ALTA":
-            msg = format_telegram_message(analysis)
+        if señal_tipo in ("COMPRA","VENTA") or confianza == "ALTA":
+            msg  = format_telegram_message(analysis)
             sent = send_telegram(msg)
-            print(f"   {'✅' if sent else '❌'} Telegram enviado")
+            print(f"   {'✅' if sent else '❌'} Telegram {'enviado' if sent else 'falló'}")
         else:
-            print(f"   ℹ️  Sin señal relevante — no se envía Telegram")
-
+            print(f"   ℹ️  Sin señal relevante")
         return analysis
-
     except Exception as e:
         print(f"   ❌ Error: {e}")
         return None
@@ -348,17 +292,13 @@ def main():
     print(f"🌊 ELLIOTT WAVE ANALYZER")
     print(f"⏰ {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}")
     print(f"{'═'*50}")
-
     results = []
     for symbol, asset_type in ASSETS:
         analysis = analyze_asset(symbol, asset_type)
         if analysis:
             results.append(analysis)
-
-    # Guardar para el dashboard
     save_results(results)
-    print(f"\n✅ Análisis completo. {len(results)}/{len(ASSETS)} activos procesados.")
-    print(f"📁 Resultados guardados en {RESULTS_FILE}")
+    print(f"\n✅ Completo. {len(results)}/{len(ASSETS)} activos procesados.")
 
 
 if __name__ == "__main__":
