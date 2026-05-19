@@ -275,7 +275,7 @@ def analyze_asset(symbol: str, asset_type: str) -> Optional[dict]:
         print(f"   ✅ Análisis: {analysis.get('señal',{}).get('tipo','?')} ({analysis.get('confianza','?')})")
         señal_tipo = analysis.get("señal", {}).get("tipo", "SIN_SEÑAL")
         confianza  = analysis.get("confianza", "BAJA")
-        if True:
+        if señal_tipo in ("COMPRA","VENTA") or confianza == "ALTA":
             msg  = format_telegram_message(analysis)
             sent = send_telegram(msg)
             print(f"   {'✅' if sent else '❌'} Telegram {'enviado' if sent else 'falló'}")
