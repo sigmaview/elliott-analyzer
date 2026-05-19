@@ -18,7 +18,7 @@ jobs:
           python-version: '3.11'
 
       - name: Instalar dependencias
-        run: pip install pandas pandas-ta yfinance requests
+        run: pip install pandas ta yfinance requests
 
       - name: Ejecutar análisis
         env:
