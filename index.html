@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SigmaView</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #080b12;
+  --surface:  #0d1220;
+  --border:   #1a2235;
+  --text:     #c8d4e8;
+  --muted:    #4a5568;
+  --green:    #00e5a0;
+  --red:      #ff4d6d;
+  --yellow:   #ffd166;
+  --blue:     #4d9fff;
+  --purple:   #a78bfa;
+  --glow-g:   rgba(0,229,160,.15);
+  --glow-r:   rgba(255,77,109,.15);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 20% 0%,rgba(77,159,255,.04) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 100%,rgba(0,229,160,.04) 0%,transparent 60%);pointer-events:none;z-index:0}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(8,11,18,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:56px}
+.logo{font-weight:800;font-size:1.1rem;letter-spacing:.15em;color:#fff;display:flex;align-items:center;gap:10px}
+.logo-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.nav-tabs{display:flex;gap:4px}
+.tab{font-family:'DM Mono',monospace;font-size:.72rem;padding:6px 16px;border-radius:6px;border:none;cursor:pointer;transition:.2s;background:transparent;color:var(--muted);letter-spacing:.05em}
+.tab.active{background:var(--border);color:var(--text)}
+.tab:hover:not(.active){color:var(--text)}
+.update-time{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--muted)}
+
+/* VIEWS */
+.view{display:none;padding:28px 32px;position:relative;z-index:1}
+.view.active{display:block}
+
+/* STATS BAR */
+.stats-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:28px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.stat-card.green::before{background:var(--green)}
+.stat-card.red::before{background:var(--red)}
+.stat-card.blue::before{background:var(--blue)}
+.stat-card.yellow::before{background:var(--yellow)}
+.stat-label{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+.stat-value{font-size:1.5rem;font-weight:800;line-height:1}
+.stat-sub{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--muted);margin-top:4px}
+
+/* GRID */
+#grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:16px}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:transform .2s,border-color .2s}
+.card:hover{transform:translateY(-2px);border-color:rgba(77,159,255,.3)}
+.card-top{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--border)}
+.sym{font-weight:800;font-size:1rem;letter-spacing:.05em}
+.price{font-family:'DM Mono',monospace;font-size:.95rem;font-weight:500}
+.card-body{padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+
+/* SIGNAL */
+.sig-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sig-badge{font-family:'DM Mono',monospace;font-size:.7rem;font-weight:500;padding:4px 12px;border-radius:99px;letter-spacing:.05em}
+.sig-COMPRA{background:var(--glow-g);color:var(--green);border:1px solid rgba(0,229,160,.4)}
+.sig-VENTA{background:var(--glow-r);color:var(--red);border:1px solid rgba(255,77,109,.4)}
+.sig-ESPERAR{background:rgba(255,209,102,.08);color:var(--yellow);border:1px solid rgba(255,209,102,.3)}
+.sig-SIN_SEÑAL{background:rgba(74,85,104,.1);color:var(--muted);border:1px solid var(--border)}
+.conf-badge{font-family:'DM Mono',monospace;font-size:.65rem;padding:3px 10px;border-radius:99px}
+.conf-ALTA{background:rgba(167,139,250,.1);color:var(--purple);border:1px solid rgba(167,139,250,.3)}
+.conf-MEDIA{background:rgba(77,159,255,.1);color:var(--blue);border:1px solid rgba(77,159,255,.3)}
+.conf-BAJA{background:rgba(74,85,104,.1);color:var(--muted);border:1px solid var(--border)}
+.sig-desc{font-size:.75rem;color:var(--muted);line-height:1.4}
+
+/* WAVES */
+.sec-label{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.wave-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.wave-block{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;padding:10px}
+.wave-tag{font-size:.65rem;color:var(--muted);margin-bottom:4px}
+.wave-val{font-size:.82rem;font-weight:700;color:var(--blue)}
+.wave-struct{font-size:.72rem;color:var(--text);margin-top:2px}
+.wave-desc{font-size:.68rem;color:var(--muted);margin-top:4px;line-height:1.4}
+.fib{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--purple);margin-top:4px}
+
+/* LEVELS */
+.levels-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.lv{border-radius:8px;padding:8px 10px}
+.lv-entry{background:rgba(77,159,255,.07);border:1px solid rgba(77,159,255,.2)}
+.lv-stop{background:rgba(255,77,109,.07);border:1px solid rgba(255,77,109,.2)}
+.lv-target{background:rgba(0,229,160,.07);border:1px solid rgba(0,229,160,.2)}
+.lv-label{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--muted);margin-bottom:2px;letter-spacing:.05em}
+.lv-val{font-family:'DM Mono',monospace;font-size:.88rem;font-weight:500}
+.lv-entry .lv-val{color:var(--blue)}
+.lv-stop .lv-val{color:var(--red)}
+.lv-target .lv-val{color:var(--green)}
+.rr-chip{font-family:'DM Mono',monospace;font-size:.7rem;padding:4px 10px;border-radius:6px;background:rgba(0,229,160,.1);color:var(--green);border:1px solid rgba(0,229,160,.2)}
+
+/* INDICATORS */
+.ind-list{display:flex;flex-direction:column;gap:5px}
+.ind-item{font-size:.72rem;color:var(--muted);padding:5px 10px;background:rgba(255,255,255,.02);border-radius:6px;line-height:1.4}
+.ind-item b{color:var(--text);font-weight:600}
+
+/* SUMMARY */
+.summary{font-size:.75rem;color:var(--muted);line-height:1.5;padding-left:10px;border-left:2px solid var(--border)}
+
+/* CARD FOOTER */
+.card-ft{padding:8px 18px;border-top:1px solid var(--border);font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);text-align:right}
+
+/* ── HISTORY VIEW ── */
+.history-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:28px}
+
+/* TABLE */
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:24px}
+.table-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.table-title{font-weight:700;font-size:.9rem}
+table{width:100%;border-collapse:collapse}
+th{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:10px 16px;text-align:left;border-bottom:1px solid var(--border)}
+td{font-family:'DM Mono',monospace;font-size:.75rem;padding:10px 16px;border-bottom:1px solid rgba(26,34,53,.5);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+.status-badge{font-size:.65rem;padding:3px 8px;border-radius:99px}
+.status-ACTIVA{background:rgba(77,159,255,.1);color:var(--blue);border:1px solid rgba(77,159,255,.3)}
+.status-CERRADA{background:rgba(74,85,104,.1);color:var(--muted);border:1px solid var(--border)}
+.ret-pos{color:var(--green);font-weight:600}
+.ret-neg{color:var(--red);font-weight:600}
+.hit-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:3px}
+.hit-yes{background:var(--green)}
+.hit-no{background:var(--border)}
+
+/* ASSET PERF */
+.asset-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:28px}
+.asset-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px}
+.asset-sym{font-weight:800;font-size:.95rem;margin-bottom:10px}
+.asset-bar-wrap{height:4px;background:var(--border);border-radius:99px;margin:8px 0}
+.asset-bar{height:4px;border-radius:99px;background:var(--green);transition:width .6s}
+.asset-stats{display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:.68rem;color:var(--muted)}
+
+/* LOADING */
+#loading{text-align:center;padding:80px 20px;color:var(--muted)}
+.spin{width:36px;height:36px;border:2px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo"><span class="logo-dot"></span>SIGMAVIEW</div>
+  <div class="nav-tabs">
+    <button class="tab active" onclick="showView('dashboard',this)">Dashboard</button>
+    <button class="tab" onclick="showView('history',this)">Historial</button>
+  </div>
+  <div class="update-time" id="update-time">—</div>
+</nav>
+
+<!-- DASHBOARD VIEW -->
+<div class="view active" id="view-dashboard">
+  <div id="loading"><div class="spin"></div>Cargando análisis...</div>
+  <div id="stats-bar" class="stats-bar" style="display:none"></div>
+  <div id="grid" style="display:none"></div>
+</div>
+
+<!-- HISTORY VIEW -->
+<div class="view" id="view-history">
+  <div id="h-loading"><div class="spin" style="margin-top:60px"></div></div>
+  <div id="history-content" style="display:none">
+    <div id="history-stats" class="history-stats"></div>
+    <div id="asset-perf" class="asset-grid"></div>
+    <div class="table-wrap">
+      <div class="table-head"><span class="table-title">🟢 Señales Activas</span><span id="activas-count" style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--muted)"></span></div>
+      <table><thead><tr><th>Activo</th><th>Tipo</th><th>Entrada</th><th>SL</th><th>O1</th><th>O2</th><th>O3</th><th>R/B</th><th>Alcanzados</th><th>Fecha</th></tr></thead>
+      <tbody id="activas-table"></tbody></table>
+    </div>
+    <div class="table-wrap">
+      <div class="table-head"><span class="table-title">📋 Señales Cerradas</span><span id="cerradas-count" style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--muted)"></span></div>
+      <table><thead><tr><th>Activo</th><th>Tipo</th><th>Entrada</th><th>Resultado</th><th>O1</th><th>O2</th><th>O3</th><th>SL</th><th>Fecha</th></tr></thead>
+      <tbody id="cerradas-table"></tbody></table>
+    </div>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+function showView(name, btn) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  $('view-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+function signalColor(tipo) {
+  return {COMPRA:'var(--green)',VENTA:'var(--red)',ESPERAR:'var(--yellow)'}[tipo] || 'var(--muted)';
+}
+
+function fmt(n) { return n != null ? Number(n).toLocaleString('en-US', {maximumFractionDigits:4}) : '—'; }
+function fmtPct(n) { return n != null ? (n > 0 ? '+' : '') + Number(n).toFixed(2) + '%' : '—'; }
+
+// ── DASHBOARD ──────────────────────────────────────────────────────────────
+function renderCard(a) {
+  const s = a.señal || {}; const tipo = s.tipo || 'SIN_SEÑAL';
+  const gm = a.onda_grado_mayor || {}; const gn = a.onda_grado_menor || {};
+  const nv = a.niveles || {}; const ind = a.indicadores || {};
+  const rr = a.ratio_riesgo_beneficio;
+  const hasLevels = ['COMPRA','VENTA'].includes(tipo) && nv.entrada;
+
+  return `<div class="card">
+    <div class="card-top">
+      <div class="sym">${a.simbolo||'?'}</div>
+      <div class="price" style="color:${signalColor(tipo)}">${fmt(a.precio_actual)}</div>
+    </div>
+    <div class="card-body">
+      <div>
+        <div class="sig-row">
+          <span class="sig-badge sig-${tipo}">${tipo} ${s.fuerza||''}</span>
+          <span class="conf-badge conf-${a.confianza||''}">${a.confianza||'?'}</span>
+          ${rr ? `<span class="rr-chip">R/B ${Number(rr).toFixed(1)}x</span>` : ''}
+        </div>
+        <p class="sig-desc" style="margin-top:6px">${s.descripcion||''}</p>
+      </div>
+      <div>
+        <div class="sec-label">Ondas de Elliott</div>
+        <div class="wave-grid">
+          <div class="wave-block">
+            <div class="wave-tag">GRADO MAYOR</div>
+            <div class="wave-val">${gm.onda_actual||'?'}</div>
+            <div class="wave-struct">${gm.estructura||''}</div>
+            <div class="wave-desc">${gm.descripcion||''}</div>
+            ${gm.fibonacci_nivel ? `<div class="fib">Fib: ${gm.fibonacci_nivel}</div>` : ''}
+          </div>
+          <div class="wave-block">
+            <div class="wave-tag">GRADO MENOR</div>
+            <div class="wave-val" style="color:var(--purple)">${gn.onda_actual||'?'}</div>
+            <div class="wave-struct">${gn.estructura||''}</div>
+            <div class="wave-desc">${gn.descripcion||''}</div>
+            ${gn.fibonacci_nivel ? `<div class="fib">Fib: ${gn.fibonacci_nivel}</div>` : ''}
+          </div>
+        </div>
+      </div>
+      ${hasLevels ? `<div>
+        <div class="sec-label">Niveles</div>
+        <div class="levels-grid">
+          <div class="lv lv-entry"><div class="lv-label">ENTRADA</div><div class="lv-val">${fmt(nv.entrada)}</div></div>
+          <div class="lv lv-stop"><div class="lv-label">STOP LOSS</div><div class="lv-val">${fmt(nv.stop_loss)}</div></div>
+          <div class="lv lv-target"><div class="lv-label">OBJETIVO 1</div><div class="lv-val">${fmt(nv.objetivo_1)}</div></div>
+          <div class="lv lv-target"><div class="lv-label">OBJETIVO 2</div><div class="lv-val">${fmt(nv.objetivo_2)}</div></div>
+          ${nv.objetivo_3 ? `<div class="lv lv-target" style="grid-column:1/-1"><div class="lv-label">OBJETIVO 3</div><div class="lv-val">${fmt(nv.objetivo_3)}</div></div>` : ''}
+        </div>
+      </div>` : ''}
+      <div>
+        <div class="sec-label">Indicadores</div>
+        <div class="ind-list">
+          <div class="ind-item"><b>RSI</b> · ${ind.rsi_interpretacion||'—'}</div>
+          <div class="ind-item"><b>MACD</b> · ${ind.macd_interpretacion||'—'}</div>
+          <div class="ind-item"><b>ADX</b> · ${ind.adx_interpretacion||'—'}</div>
+        </div>
+        ${ind.confluencia ? `<p class="sig-desc" style="margin-top:6px">${ind.confluencia}</p>` : ''}
+      </div>
+      <div><div class="sec-label">Resumen</div><p class="summary">${a.resumen||'—'}</p></div>
+    </div>
+    <div class="card-ft">${a.timestamp||''}</div>
+  </div>`;
+}
+
+async function loadDashboard() {
+  try {
+    const r = await fetch('results.json?t='+Date.now());
+    if (!r.ok) throw new Error();
+    const data = await r.json();
+    $('update-time').textContent = '🕐 ' + (data.last_update||'');
+    const analyses = data.analyses || [];
+    const compras = analyses.filter(a => a.señal?.tipo === 'COMPRA').length;
+    const ventas  = analyses.filter(a => a.señal?.tipo === 'VENTA').length;
+    const altas   = analyses.filter(a => a.confianza === 'ALTA').length;
+    $('stats-bar').innerHTML = `
+      <div class="stat-card green"><div class="stat-label">Señales Compra</div><div class="stat-value" style="color:var(--green)">${compras}</div><div class="stat-sub">activos</div></div>
+      <div class="stat-card red"><div class="stat-label">Señales Venta</div><div class="stat-value" style="color:var(--red)">${ventas}</div><div class="stat-sub">activos</div></div>
+      <div class="stat-card blue"><div class="stat-label">Confianza Alta</div><div class="stat-value" style="color:var(--blue)">${altas}</div><div class="stat-sub">de ${analyses.length}</div></div>
+      <div class="stat-card yellow"><div class="stat-label">Activos</div><div class="stat-value" style="color:var(--yellow)">${analyses.length}</div><div class="stat-sub">monitoreados</div></div>`;
+    $('loading').style.display = 'none';
+    $('stats-bar').style.display = 'grid';
+    $('grid').style.display = 'grid';
+    $('grid').innerHTML = analyses.map(renderCard).join('');
+  } catch(e) {
+    $('loading').innerHTML = '<p style="color:var(--muted)">Sin datos. Ejecuta el analyzer primero.</p>';
+  }
+}
+
+// ── HISTORY ────────────────────────────────────────────────────────────────
+function hitDots(s) {
+  return ['hit_o1','hit_o2','hit_o3'].map(k =>
+    `<span class="hit-dot ${s[k]?'hit-yes':'hit-no'}"></span>`).join('');
+}
+
+async function loadHistory() {
+  try {
+    const r = await fetch('history.json?t='+Date.now());
+    if (!r.ok) throw new Error();
+    const data = await r.json();
+    const signals = data.signals || [];
+    const stats   = data.stats   || {};
+    const activas  = signals.filter(s => s.status === 'ACTIVA');
+    const cerradas = signals.filter(s => s.status === 'CERRADA').reverse();
+
+    // Stats globales
+    $('history-stats').innerHTML = `
+      <div class="stat-card blue"><div class="stat-label">Total Señales</div><div class="stat-value" style="color:var(--blue)">${stats.total_señales||0}</div></div>
+      <div class="stat-card green"><div class="stat-label">Tasa de Éxito</div><div class="stat-value" style="color:var(--green)">${stats.tasa_exito||0}%</div><div class="stat-sub">${stats.ganadoras||0} ganadoras</div></div>
+      <div class="stat-card ${(stats.retorno_total||0)>=0?'green':'red'}">
+        <div class="stat-label">Retorno Total</div>
+        <div class="stat-value" style="color:${(stats.retorno_total||0)>=0?'var(--green)':'var(--red)'}">${fmtPct(stats.retorno_total)}</div>
+      </div>
+      <div class="stat-card yellow"><div class="stat-label">Retorno Promedio</div><div class="stat-value" style="color:var(--yellow)">${fmtPct(stats.retorno_promedio)}</div></div>
+      <div class="stat-card green"><div class="stat-label">Mejor Señal</div><div class="stat-value" style="color:var(--green)">${fmtPct(stats.mejor_retorno)}</div></div>
+      <div class="stat-card red"><div class="stat-label">Peor Señal</div><div class="stat-value" style="color:var(--red)">${fmtPct(stats.peor_retorno)}</div></div>
+      <div class="stat-card blue"><div class="stat-label">Activas Ahora</div><div class="stat-value" style="color:var(--blue)">${stats.activas||0}</div></div>`;
+
+    // Performance por activo
+    const byAsset = stats.by_asset || {};
+    $('asset-perf').innerHTML = Object.entries(byAsset).map(([sym,d]) => `
+      <div class="asset-card">
+        <div class="asset-sym">${sym}</div>
+        <div class="asset-bar-wrap"><div class="asset-bar" style="width:${d.tasa_exito}%;background:${d.tasa_exito>=50?'var(--green)':'var(--red)'}"></div></div>
+        <div class="asset-stats">
+          <span>${d.tasa_exito}% éxito</span>
+          <span style="color:${d.retorno_promedio>=0?'var(--green)':'var(--red)'}">${fmtPct(d.retorno_promedio)} prom</span>
+        </div>
+        <div class="asset-stats" style="margin-top:4px"><span style="color:var(--muted)">${d.total} señales</span><span style="color:${d.retorno_total>=0?'var(--green)':'var(--red)'}">${fmtPct(d.retorno_total)} total</span></div>
+      </div>`).join('') || '<p style="color:var(--muted);font-size:.8rem">Sin datos por activo aún.</p>';
+
+    // Tabla activas
+    $('activas-count').textContent = activas.length + ' señales';
+    $('activas-table').innerHTML = activas.length ? activas.map(s => `<tr>
+      <td style="font-weight:700">${s.simbolo}</td>
+      <td><span class="sig-badge sig-${s.tipo}" style="font-size:.65rem">${s.tipo}</span></td>
+      <td>${fmt(s.entrada)}</td>
+      <td style="color:var(--red)">${fmt(s.sl_actual)}</td>
+      <td style="color:var(--green)">${fmt(s.objetivo_1)}</td>
+      <td style="color:var(--green)">${fmt(s.objetivo_2)}</td>
+      <td style="color:var(--green)">${fmt(s.objetivo_3)}</td>
+      <td>${s.rr ? Number(s.rr).toFixed(1)+'x' : '—'}</td>
+      <td>${hitDots(s)}</td>
+      <td style="color:var(--muted)">${(s.timestamp||'').replace(' UTC','')}</td>
+    </tr>`).join('') : '<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:24px">Sin señales activas</td></tr>';
+
+    // Tabla cerradas
+    $('cerradas-count').textContent = cerradas.length + ' señales';
+    $('cerradas-table').innerHTML = cerradas.length ? cerradas.map(s => {
+      const ret = s.resultado != null ? Number(s.resultado) : null;
+      const retClass = ret != null ? (ret >= 0 ? 'ret-pos' : 'ret-neg') : '';
+      return `<tr>
+        <td style="font-weight:700">${s.simbolo}</td>
+        <td><span class="sig-badge sig-${s.tipo}" style="font-size:.65rem">${s.tipo}</span></td>
+        <td>${fmt(s.entrada)}</td>
+        <td class="${retClass}">${ret != null ? fmtPct(ret) : '—'}</td>
+        <td><span class="hit-dot ${s.hit_o1?'hit-yes':'hit-no'}"></span>${s.hit_o1?fmt(s.hit_o1_price):'—'}</td>
+        <td><span class="hit-dot ${s.hit_o2?'hit-yes':'hit-no'}"></span>${s.hit_o2?fmt(s.hit_o2_price):'—'}</td>
+        <td><span class="hit-dot ${s.hit_o3?'hit-yes':'hit-no'}"></span>${s.hit_o3?fmt(s.hit_o3_price):'—'}</td>
+        <td><span class="hit-dot ${s.hit_sl?'hit-yes':'hit-no'}"></span>${s.hit_sl?fmt(s.hit_sl_price):'—'}</td>
+        <td style="color:var(--muted)">${(s.timestamp||'').replace(' UTC','')}</td>
+      </tr>`;
+    }).join('') : '<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:24px">Sin señales cerradas aún</td></tr>';
+
+    $('h-loading').style.display = 'none';
+    $('history-content').style.display = 'block';
+  } catch(e) {
+    $('h-loading').innerHTML = '<p style="color:var(--muted);text-align:center;padding:60px">Sin historial aún.</p>';
+  }
+}
+
+// Init
+loadDashboard();
+loadHistory();
+setInterval(loadDashboard, 5*60*1000);
+setInterval(loadHistory, 5*60*1000);
+</script>
+</body>
+</html>
