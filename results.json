@@ -1,0 +1,356 @@
+{
+  "last_update": "2026-05-19 04:16 UTC",
+  "analyses": [
+    {
+      "simbolo": "BTCUSDT",
+      "precio_actual": 76712.0,
+      "timestamp": "2026-05-19 04:13 UTC",
+      "onda_grado_mayor": {
+        "estructura": "Pauta de Impulso bajista",
+        "onda_actual": "Onda 3",
+        "descripcion": "Impulso bajista principal en desarrollo desde máximo de 81958. La onda 3 muestra extensión característica con fuerte momentum bajista",
+        "fibonacci_nivel": "Proyección 1.618 desde onda 1 apunta a zona 75200-75800"
+      },
+      "onda_grado_menor": {
+        "estructura": "Subestructura impulsiva de onda 3",
+        "onda_actual": "Posible onda (iii) o (iv) de 3",
+        "descripcion": "Movimiento correctivo menor dentro de la onda 3 bajista. Precio consolidando cerca de mínimos del swing tras caída desde 77246",
+        "fibonacci_nivel": "Retroceso 23.6% del tramo bajista en 77100, actualmente por debajo"
+      },
+      "señal": {
+        "tipo": "ESPERAR",
+        "fuerza": "DÉBIL",
+        "descripcion": "Aunque la tendencia bajista es fuerte (ADX 47.1), el RSI en 34.5 indica posible sobreventa a corto plazo. Falta confirmación de continuación o rebote correctivo. Esperamos ruptura de 76055 para ventas o recuperación sobre 77100 para invalidación temporal"
+      },
+      "niveles": {
+        "entrada": null,
+        "stop_loss": null,
+        "objetivo_1": null,
+        "objetivo_2": null,
+        "objetivo_3": null
+      },
+      "indicadores": {
+        "rsi_interpretacion": "Zona de sobreventa relativa (34.5), sugiere posible rebote técnico o pausa en la caída",
+        "macd_interpretacion": "Fuertemente bajista con histograma negativo (-43.99), MACD por debajo de señal confirma momentum vendedor activo",
+        "adx_interpretacion": "Tendencia muy fuerte (47.1 > 30) con DI- dominante (33.3 vs 10.7), confirmando control absoluto de vendedores",
+        "confluencia": "No hay confluencia clara para entrada: ADX y MACD confirman bajista pero RSI sugiere precaución por sobreventa. Momento de esperar definición"
+      },
+      "ratio_riesgo_beneficio": null,
+      "resumen": "BTCUSDT en fuerte tendencia bajista (onda 3 impulsiva) con ADX 47.1 confirmando momentum vendedor. Sin embargo, RSI en 34.5 advierte sobreventa a corto plazo. Se recomienda esperar confirmación: ruptura de 76055 para ventas o recuperación sobre 77100 para rebote correctivo",
+      "confianza": "MEDIA",
+      "razon_confianza": "La estructura Elliott bajista es clara y los indicadores de tendencia son contundentes, pero la sobreventa en RSI y proximidad a mínimos recientes requiere confirmación antes de nuevas entradas. Falta punto de activación claro"
+    },
+    {
+      "simbolo": "ETHUSDT",
+      "precio_actual": 2129.64,
+      "timestamp": "2026-05-19 04:14 UTC",
+      "onda_grado_mayor": {
+        "estructura": "Pauta de Impulso bajista",
+        "onda_actual": "Onda 3",
+        "descripcion": "Impulso bajista en desarrollo desde máximo 2321.39, con onda 3 extendida en curso mostrando fuerte momentum bajista",
+        "fibonacci_nivel": "Proyección 161.8% desde inicio impulso hacia 2050-2000"
+      },
+      "onda_grado_menor": {
+        "estructura": "Subonda (iii) de 3 bajista",
+        "onda_actual": "Subonda (iii) o (iv) en formación",
+        "descripcion": "Posible finalización de subonda (iii) con precio consolidando en zona 2121-2139. Rebote menor sugiere inicio de subonda (iv) correctiva",
+        "fibonacci_nivel": "Retroceso 38.2% de (iii) en zona 2145-2155"
+      },
+      "señal": {
+        "tipo": "ESPERAR",
+        "fuerza": "DÉBIL",
+        "descripcion": "Precio en zona de consolidación tras caída. ADX fuerte indica tendencia bajista pero momentum se desacelera. Esperar confirmación: ruptura de 2121 para venta o superación de 2155 para corrección más amplia"
+      },
+      "niveles": {
+        "entrada": null,
+        "stop_loss": null,
+        "objetivo_1": null,
+        "objetivo_2": null,
+        "objetivo_3": null
+      },
+      "indicadores": {
+        "rsi_interpretacion": "Sobreventa en 34.16, saliendo de zona extrema, sugiere agotamiento temporal bajista sin divergencia clara",
+        "macd_interpretacion": "Negativo (-32.97) pero histograma estrecho (-0.92) indica pérdida de momentum bajista, posible cruce alcista inminente",
+        "adx_interpretacion": "Tendencia fuerte ADX 46.8 con DI- 33.1 > DI+ 16.9 confirma dominio bajista, pero sin ampliación reciente",
+        "confluencia": "NO hay confluencia clara. ADX confirma bajista pero RSI en sobreventa y MACD perdiendo momentum sugieren pausa. Falta confirmación direccional"
+      },
+      "ratio_riesgo_beneficio": null,
+      "resumen": "ETH en onda 3 bajista de grado mayor con posible subonda (iv) correctiva formándose. Indicadores muestran tendencia bajista fuerte pero con pérdida de momentum en zona 2121-2139. Esperar confirmación de ruptura o rebote antes de operar.",
+      "confianza": "MEDIA",
+      "razon_confianza": "Estructura Elliott clara en grado mayor pero en zona de indecisión de corto plazo. Indicadores mixtos: tendencia bajista fuerte pero señales de agotamiento temporal. Falta trigger específico para entrada"
+    },
+    {
+      "simbolo": "AAPL",
+      "precio_actual": 297.9,
+      "timestamp": "2026-05-19 04:14 UTC",
+      "onda_grado_mayor": {
+        "estructura": "Pauta de Impulso alcista",
+        "onda_actual": "Onda 4",
+        "descripcion": "Impulso alcista desde 267.04 con máximo en 303.20 (onda 3). Actualmente en corrección de onda 4 tras completar extensión de onda 3",
+        "fibonacci_nivel": "Retroceso 38.2% en 297.36 alcanzado, próximo soporte 50% en 285.12"
+      },
+      "onda_grado_menor": {
+        "estructura": "Correctiva Zigzag (A-B-C)",
+        "onda_actual": "Onda B en desarrollo",
+        "descripcion": "Onda A correctiva bajista desde 303.20 hasta 295.48. Rebote de onda B en curso hasta zona 299-300. Pendiente onda C bajista final",
+        "fibonacci_nivel": "Onda B retrocediendo 50-61.8% de onda A, objetivo 299-300"
+      },
+      "señal": {
+        "tipo": "ESPERAR",
+        "fuerza": "DÉBIL",
+        "descripcion": "En medio de rebote técnico (onda B) dentro de corrección mayor. Faltan confirmaciones para nueva entrada. Esperar finalización de onda C para compra en zona 285-290 o ruptura clara sobre 303.20"
+      },
+      "niveles": {
+        "entrada": null,
+        "stop_loss": null,
+        "objetivo_1": null,
+        "objetivo_2": null,
+        "objetivo_3": null
+      },
+      "indicadores": {
+        "rsi_interpretacion": "Neutro en 51.6, recuperándose desde sobreventa (40.70) pero sin fuerza direccional clara",
+        "macd_interpretacion": "Débil, histograma negativo (-0.61) con MACD bajo señal. Sin cruce alcista confirmado, momentum bajista persiste",
+        "adx_interpretacion": "Tendencia débil (ADX 22.2), DI- dominando (24.7 vs 17.1) indica control bajista leve pero sin fuerza tendencial",
+        "confluencia": "NO hay confluencia. RSI neutro, MACD bajista, ADX débil con DI- superior. Indicadores reflejan consolidación/rebote sin convicción direccional clara"
+      },
+      "ratio_riesgo_beneficio": null,
+      "resumen": "AAPL completa onda 3 en 303.20 y desarrolla corrección de onda 4. Actualmente en rebote técnico (onda B) hacia 299-300 dentro de patrón correctivo zigzag. Sin señal de entrada clara hasta completar onda C bajista o romper máximos.",
+      "confianza": "MEDIA",
+      "razon_confianza": "Conteo Elliott claro con estructura impulsiva alcista y corrección identificable, pero posición actual en medio de rebote técnico sin confirmación de indicadores. Mejor esperar extremos de la corrección para operar"
+    },
+    {
+      "simbolo": "NVDA",
+      "precio_actual": 222.35,
+      "timestamp": "2026-05-19 04:14 UTC",
+      "onda_grado_mayor": {
+        "estructura": "Pauta Correctiva Zigzag (A-B-C)",
+        "onda_actual": "Onda C en desarrollo",
+        "descripcion": "Desde máximo 236.54 (14-May) se desarrolla corrección tipo Zigzag. Onda A bajista hasta 220.41 (18-May 11:30), Onda B de retroceso hasta 222.35 actual, iniciando probable Onda C bajista",
+        "fibonacci_nivel": "Onda B retrocediendo 50% de Onda A (zona 221-222)"
+      },
+      "onda_grado_menor": {
+        "estructura": "Onda B correctiva - probable finalizando",
+        "onda_actual": "Final de Onda B o inicio de Onda C",
+        "descripcion": "Rebote técnico desde 220.41 hasta 222.35 en zona de resistencia. Patrón de tres ondas completado, mostrando agotamiento alcista con RSI 44.6 y MACD negativo descendente",
+        "fibonacci_nivel": "Retroceso 50% (221.48) alcanzado, rechazando en zona 222-223"
+      },
+      "señal": {
+        "tipo": "VENTA",
+        "fuerza": "MODERADA",
+        "descripcion": "Finalización probable de Onda B correctiva en zona de resistencia 222-223. Estructura Elliott sugiere inicio de Onda C bajista. MACD negativo, ADX 32.1 confirma tendencia, DI- > DI+ (29.3 vs 17.0). RSI 44.6 con espacio para bajar. Falta confirmación de ruptura bajo 220"
+      },
+      "niveles": {
+        "entrada": 221.8,
+        "stop_loss": 224.5,
+        "objetivo_1": 217.5,
+        "objetivo_2": 214.9,
+        "objetivo_3": 211.5
+      },
+      "indicadores": {
+        "rsi_interpretacion": "Neutro-Bajista en 44.6, debajo de 50, sin sobrecompra, con espacio para descenso hacia sobreventa",
+        "macd_interpretacion": "Bajista confirmado: MACD -1.02 bajo señal 0.29, histograma negativo -1.31 y expandiéndose, sin señal de giro alcista",
+        "adx_interpretacion": "Tendencia moderada-fuerte ADX 32.1, DI- dominante (29.3) sobre DI+ (17.0) confirma sesgo bajista establecido",
+        "confluencia": "ALTA confluencia bajista: Elliott (fin Onda B/inicio C), MACD negativo expandiéndose, ADX con DI- dominante, RSI bajo 50. Los 3 indicadores técnicos alineados con estructura Elliott bajista"
+      },
+      "ratio_riesgo_beneficio": 1.59,
+      "resumen": "NVDA completa probable Onda B correctiva en zona 222-223 tras caída desde máximos de 236.54. Estructura Elliott sugiere inicio de Onda C bajista con objetivo mínimo 217.5 y extensión hacia 211.5. Indicadores técnicos confirman sesgo bajista con MACD negativo, ADX tendencial y DI- dominante. Ratio riesgo-beneficio favorable 1.59:1.",
+      "confianza": "MEDIA",
+      "razon_confianza": "Estructura Elliott clara con Onda B en zona esperada y confluencia de indicadores bajistas. Confianza MEDIA (no ALTA) porque falta confirmación de ruptura bajo soporte 220.41 y el volumen reciente es moderado. Ideal esperar confirmación bajo 220 para mayor certeza."
+    },
+    {
+      "simbolo": "MSFT",
+      "precio_actual": 423.66,
+      "timestamp": "2026-05-19 04:15 UTC",
+      "onda_grado_mayor": {
+        "estructura": "Pauta de Impulso alcista",
+        "onda_actual": "Onda 3",
+        "descripcion": "Impulso alcista desde mínimo 398.01. Onda 1 finalizó en 429.91 (15/05), onda 2 corrigió a 415.61 (18/05 apertura), ahora desarrollando onda 3 extendida",
+        "fibonacci_nivel": "Superó 61.8% de retroceso de onda 2, proyección 1.618 de onda 1 en 444.50"
+      },
+      "onda_grado_menor": {
+        "estructura": "Subonda (iii) de onda 3",
+        "onda_actual": "Subonda (iii) en desarrollo",
+        "descripcion": "Fuerte impulso desde 417.63, rompió máximo previo 426.44. Movimiento de +6.03 puntos en última vela indica aceleración característica de tercera onda",
+        "fibonacci_nivel": "Zona de extensión 1.272 alcanzada en 423.66, próximo objetivo 1.618 en 428-430"
+      },
+      "señal": {
+        "tipo": "ESPERAR",
+        "fuerza": "MODERADA",
+        "descripcion": "Precio en zona de extensión tras fuerte impulso +4.84% en 24h. RSI 61.8 muestra momentum pero acercándose a sobrecompra. Recomendable esperar retroceso a 420-418 (pullback de subonda (iv)) para entrada con mejor R:B"
+      },
+      "niveles": {
+        "entrada": null,
+        "stop_loss": null,
+        "objetivo_1": null,
+        "objetivo_2": null,
+        "objetivo_3": null
+      },
+      "indicadores": {
+        "rsi_interpretacion": "RSI 61.8 en zona alcista con momentum, ascendiendo desde 54.22 pero sin sobrecompra aún",
+        "macd_interpretacion": "MACD positivo 3.16 sobre señal 2.97, histograma +0.19 confirmando impulso alcista activo",
+        "adx_interpretacion": "ADX 25.0 indica tendencia moderada, DI+ 26.5 > DI- 20.3 confirma direccionalidad alcista aunque no fuerte",
+        "confluencia": "Indicadores muestran confluencia alcista moderada: MACD positivo, RSI alcista, DI+ dominante. Sin embargo ADX débil (<30) sugiere posible consolidación antes de continuación"
+      },
+      "ratio_riesgo_beneficio": null,
+      "resumen": "MSFT desarrolla onda 3 de impulso alcista mayor con subonda (iii) en extensión. Tras rally +4.84% en 24h, precio alcanzó zona de extensión Fibonacci 1.272 en 423.66. Recomendable esperar retroceso técnico a 420-418 para entrada con mejor ratio riesgo-beneficio antes de continuación hacia 428-430.",
+      "confianza": "MEDIA",
+      "razon_confianza": "Estructura Elliott clara en onda 3, indicadores confirman alcismo, pero precio extendido tras fuerte impulso y ADX débil sugieren consolidación inminente. Mejor esperar pullback que perseguir precio actual"
+    },
+    {
+      "simbolo": "AMZN",
+      "precio_actual": 264.92,
+      "timestamp": "2026-05-19 04:15 UTC",
+      "onda_grado_mayor": {
+        "estructura": "Pauta Correctiva Zigzag",
+        "onda_actual": "Onda C en desarrollo",
+        "descripcion": "Desde el máximo en 278.56, estructura correctiva ABC donde onda A descendió hasta 260.89 (15/05), onda B rebotó hasta 268.85 (18/05), y ahora desarrolla onda C bajista",
+        "fibonacci_nivel": "Onda C proyecta extensión 1.0 de A hacia 256.16 (mínimo swing)"
+      },
+      "onda_grado_menor": {
+        "estructura": "Impulso descendente en formación",
+        "onda_actual": "Posible onda 3 de C iniciando",
+        "descripcion": "Tras rebote correctivo en onda B hasta 268.85, el precio muestra debilidad con ondas 1-2 de menor grado completadas. Consolidación actual sugiere preparación para extensión bajista",
+        "fibonacci_nivel": "Retroceso 38.2% del impulso 268.85-263.09 alcanzado en 265.16"
+      },
+      "señal": {
+        "tipo": "VENTA",
+        "fuerza": "MODERADA",
+        "descripcion": "Estructura Elliott confirma continuación bajista en onda C. Precio en resistencia de retroceso tras rechazo. ADX débil (24.3) limita fuerza, pero configuración técnica favorece cortos"
+      },
+      "niveles": {
+        "entrada": 264.5,
+        "stop_loss": 267.0,
+        "objetivo_1": 261.5,
+        "objetivo_2": 258.8,
+        "objetivo_3": 256.16
+      },
+      "indicadores": {
+        "rsi_interpretacion": "RSI en 46.6 muestra debilidad sin sobreventa, espacio para caída adicional sin divergencias relevantes",
+        "macd_interpretacion": "Histograma girando positivo (0.098) pero ambas líneas en territorio negativo profundo (-0.93/-1.03), señal de debilidad en rebote correctivo",
+        "adx_interpretacion": "ADX débil en 24.3 con DI- (25.1) > DI+ (16.8) confirma sesgo bajista aunque sin fuerza tendencial clara. Diferencial de 8.3 puntos favorece bajistas",
+        "confluencia": "Parcial: Elliott y ADX/DI alineados bajistas. RSI neutral. MACD en cruce técnico alcista contradice pero sin fuerza. 2 de 3 indicadores confirman sesgo bajista"
+      },
+      "ratio_riesgo_beneficio": 1.2,
+      "resumen": "AMZN desarrolla onda C correctiva bajista con estructura de impulso descendente. Precio en zona de resistencia tras rebote técnico, con configuración favorable para continuación hacia mínimos en 256-258. Señal moderada por falta de confluencia total en indicadores y ADX débil.",
+      "confianza": "MEDIA",
+      "razon_confianza": "Estructura Elliott clara y bien definida con DI bajista dominante, pero ADX débil (<25) y MACD mostrando intento de giro alcista reducen convicción. Falta catalizador para impulso fuerte. Ratio riesgo/beneficio ajustado (1.2:1) refleja incertidumbre"
+    },
+    {
+      "simbolo": "GOOGL",
+      "precio_actual": 396.96,
+      "timestamp": "2026-05-19 04:15 UTC",
+      "onda_grado_mayor": {
+        "estructura": "Pauta Correctiva Zigzag en desarrollo",
+        "onda_actual": "Onda C bajista",
+        "descripcion": "Desde máximo 408.61 (18/05 09:30) se observa estructura correctiva bajista. Impulso bajista desde 408.61 hasta 388.64 (onda A), rebote correctivo hasta 403.50 (onda B), y actualmente desarrollando onda C bajista hacia zona de soporte 385-380",
+        "fibonacci_nivel": "Retroceso 50% de A-B en 396.07, actualmente cerca de ese nivel"
+      },
+      "onda_grado_menor": {
+        "estructura": "Impulso bajista de grado menor dentro de onda C",
+        "onda_actual": "Posible onda (iii) o (iv) de C",
+        "descripcion": "Desde máximo local 402.64, desarrollando movimiento bajista en 5 ondas. El precio actual 396.96 muestra debilidad tras fallo en romper 400+. Proximidad a mínimo 388.64 sugiere continuación bajista",
+        "fibonacci_nivel": "Extensión 1.0 de onda (i) proyecta objetivo 390-388"
+      },
+      "señal": {
+        "tipo": "VENTA",
+        "fuerza": "MODERADA",
+        "descripcion": "Estructura Elliott confirma onda C bajista en desarrollo. Precio rechazado en zona 402 y perdiendo 397. RSI bajo 50 (47.7), MACD negativo (histograma -0.44), ADX débil (18.1) pero DI+ superando ligeramente DI-. Falta confirmación de ruptura bajo 395 para señal fuerte"
+      },
+      "niveles": {
+        "entrada": 396.5,
+        "stop_loss": 400.5,
+        "objetivo_1": 390.0,
+        "objetivo_2": 386.5,
+        "objetivo_3": 382.0
+      },
+      "indicadores": {
+        "rsi_interpretacion": "RSI 47.7 en zona neutra-bajista, sin sobreventa aún. Tendencia descendente desde 66.89 confirma debilidad",
+        "macd_interpretacion": "MACD positivo pero histograma negativo (-0.44) indica pérdida de momentum alcista. Línea MACD bajo señal confirma sesgo bajista",
+        "adx_interpretacion": "ADX débil 18.1 indica ausencia de tendencia fuerte. DI+ (25.1) apenas supera DI- (23.7), situación indecisa pero con leve sesgo alcista que contradice precio",
+        "confluencia": "Confluencia PARCIAL: RSI y MACD confirman debilidad bajista. ADX débil resta confianza. Elliott Wave estructura bajista clara. 2 de 3 indicadores + Elliott apoyan venta moderada"
+      },
+      "ratio_riesgo_beneficio": 1.62,
+      "resumen": "GOOGL desarrolla onda C correctiva bajista desde 402.64 hacia zona 385-380. Señal de venta moderada con entrada 396.50 y objetivo principal 390. RSI y MACD confirman debilidad pero ADX bajo (18.1) sugiere falta de convicción. Ratio riesgo/beneficio 1.62:1 aceptable para operativa conservadora.",
+      "confianza": "MEDIA",
+      "razon_confianza": "Estructura Elliott clara (onda C bajista) y confluencia RSI+MACD bajistas. Sin embargo, ADX muy bajo (18.1) indica ausencia de tendencia fuerte y DI+/DI- prácticamente iguales muestran indecisión. Falta confirmación con ruptura clara bajo 395 y ADX>20 para confianza ALTA"
+    },
+    {
+      "simbolo": "META",
+      "precio_actual": 611.33,
+      "timestamp": "2026-05-19 04:16 UTC",
+      "onda_grado_mayor": {
+        "estructura": "Pauta Correctiva Zigzag",
+        "onda_actual": "Onda C en desarrollo",
+        "descripcion": "Desde máximo 674.25, estructura correctiva ABC donde A bajista finalizó en 592.65, B alcista terminó en 623.16 (retroceso 0.618), ahora desarrollando C bajista",
+        "fibonacci_nivel": "En zona entre retroceso 0.382 (623.16) y extensión 1.0 proyectada hacia 580-590"
+      },
+      "onda_grado_menor": {
+        "estructura": "Impulso bajista de 5 ondas dentro de C",
+        "onda_actual": "Posible onda 4 correctiva",
+        "descripcion": "Desde 623.16: onda 1 bajista a 603.69, onda 2 alcista a 621.99, onda 3 bajista a 603.69, ahora en onda 4 lateral 603-613 con señales de debilidad",
+        "fibonacci_nivel": "Onda 4 en retroceso 0.382 (611-613), resistencia clave en 615-618"
+      },
+      "señal": {
+        "tipo": "ESPERAR",
+        "fuerza": "DÉBIL",
+        "descripcion": "Precio en zona neutral dentro de posible onda 4. Se requiere confirmación: ruptura bajo 603.69 para completar onda 5 bajista, o quiebre sobre 618 para invalidar escenario bajista. Lateralización sin definición clara"
+      },
+      "niveles": {
+        "entrada": null,
+        "stop_loss": null,
+        "objetivo_1": null,
+        "objetivo_2": null,
+        "objetivo_3": null
+      },
+      "indicadores": {
+        "rsi_interpretacion": "RSI 47.4 en zona neutral, sin sobreventa ni sobrecompra, perdiendo momentum desde zona 71 del 14/05",
+        "macd_interpretacion": "MACD negativo (-0.34) bajo señal (0.45), histograma -0.79 indica momentum bajista pero perdiendo fuerza, sin cruce inminente",
+        "adx_interpretacion": "ADX 19.4 indica tendencia muy débil/ausente, DI- 27.2 > DI+ 19.6 pero sin fuerza direccional clara, mercado lateral",
+        "confluencia": "NO hay confluencia. RSI neutral, MACD bajista pero débil, ADX muestra ausencia de tendencia. Los tres indicadores señalan indecisión y lateralización, no hay confirmación para operar"
+      },
+      "ratio_riesgo_beneficio": null,
+      "resumen": "META en estructura correctiva compleja, posiblemente desarrollando onda 4 de impulso bajista dentro de onda C mayor. Precio lateralizando entre 603-615 sin dirección clara. Indicadores muestran debilidad en momentum y ausencia de tendencia (ADX<20). Esperar confirmación: ruptura bajo 603 para ventas o sobre 618 para cambio de sesgo.",
+      "confianza": "BAJA",
+      "razon_confianza": "Estructura Elliott poco definida en grado menor, ADX bajo 20 indica no-tendencia, lateralización prolongada sin confirmación direccional, falta de confluencia en indicadores técnicos"
+    },
+    {
+      "simbolo": "TSLA",
+      "precio_actual": 410.07,
+      "timestamp": "2026-05-19 04:16 UTC",
+      "onda_grado_mayor": {
+        "estructura": "Pauta de Impulso bajista",
+        "onda_actual": "Onda 3",
+        "descripcion": "Impulso bajista desde máximo 453.40. Onda 1 hasta 408.24, onda 2 correctiva hasta 451.97 (retroceso 0.618), desarrollo de onda 3 extendida en curso hacia mínimo 368.17",
+        "fibonacci_nivel": "Proyección 1.618 de onda 1 en zona 340-350"
+      },
+      "onda_grado_menor": {
+        "estructura": "Subdivisión de impulso bajista en onda 3",
+        "onda_actual": "Subonda (iii) o (iv)",
+        "descripcion": "Caída desde 443.18 hasta 408.24. Posible rebote correctivo de subonda (iv) en desarrollo. Precio muestra leve recuperación pero sin confirmar finalización de corrección",
+        "fibonacci_nivel": "Resistencia en 418-422 (retroceso 0.382 de caída reciente)"
+      },
+      "señal": {
+        "tipo": "ESPERAR",
+        "fuerza": "DÉBIL",
+        "descripcion": "Precio en zona de rebote técnico dentro de impulso bajista. RSI en sobreventa (33.1) sugiere alivio temporal pero sin confirmación de cambio de estructura. MACD muy negativo y ADX fuerte (34.8) con DI- dominante indica tendencia bajista intacta. Esperamos definición: quiebre de 405 para venta o superación sostenida de 420 para considerar corrección más profunda"
+      },
+      "niveles": {
+        "entrada": null,
+        "stop_loss": null,
+        "objetivo_1": null,
+        "objetivo_2": null,
+        "objetivo_3": null
+      },
+      "indicadores": {
+        "rsi_interpretacion": "Sobreventa en 33.1, indica posible rebote técnico de corto plazo pero sin divergencia alcista confirmada",
+        "macd_interpretacion": "Muy negativo (-7.28) con histograma creciente levemente (-2.28), sin cruce alcista. Mantiene sesgo bajista",
+        "adx_interpretacion": "Tendencia fuerte ADX=34.8 con DI- dominante (33.9 vs 11.9), confirma momentum bajista activo",
+        "confluencia": "NO hay confluencia para señal de compra. RSI sugiere rebote pero MACD y ADX confirman control bajista. Estructura Elliott indica corrección menor dentro de impulso bajista mayor"
+      },
+      "ratio_riesgo_beneficio": null,
+      "resumen": "TSLA en impulso bajista de grado mayor (onda 3), tras completar corrección de onda 2 en 451.97. Precio actual en posible rebote técnico menor (subonda iv) pero sin confirmación de finalización. Estructura y indicadores mantienen sesgo bajista dominante. Esperar definición clara antes de operar.",
+      "confianza": "MEDIA",
+      "razon_confianza": "Estructura Elliott clara en grado mayor pero posición actual ambigua en grado menor. Rebote técnico puede extenderse a 418-422 antes de reanudar caída. Indicadores muestran sobreventa pero tendencia bajista intacta. Falta confirmación direccional para alta confianza"
+    }
+  ]
+}
