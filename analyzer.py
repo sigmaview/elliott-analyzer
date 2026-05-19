@@ -166,7 +166,7 @@ def call_claude(prompt: str) -> dict:
         "anthropic-version": "2023-06-01"
     }
     body = {
-        "model": "claude-sonnet-4-20250514",
+        "model": "claude-sonnet-4-5",
         "max_tokens": 1500,
         "messages": [{"role": "user", "content": prompt}]
     }
