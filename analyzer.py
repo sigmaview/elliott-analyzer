@@ -21,6 +21,11 @@ ASSETS = [
     ("ETHUSDT",  "crypto"),
     ("AAPL",     "stock"),
     ("NVDA",     "stock"),
+    ("MSFT",     "stock"),
+    ("AMZN",     "stock"),
+    ("GOOGL",    "stock"),
+    ("META",     "stock"),
+    ("TSLA",     "stock"),
 ]
 
 RESULTS_FILE = "results.json"
