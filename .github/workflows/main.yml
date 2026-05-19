@@ -26,3 +26,11 @@ jobs:
           TELEGRAM_CHAT_ID:  ${{ secrets.TELEGRAM_CHAT_ID }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python analyzer.py
+
+      - name: Publicar en GitHub Pages
+        run: |
+          git config user.name "Elliott Bot"
+          git config user.email "bot@elliott.com"
+          git add results.json
+          git diff --staged --quiet || git commit -m "Update results"
+          git push
